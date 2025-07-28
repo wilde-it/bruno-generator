@@ -1,0 +1,28 @@
+{
+  "name": "bruno-generator",
+  "module": "src/index.ts",
+  "type": "module",
+  "version": "0.0.1",
+  "devDependencies": {
+    "bun-plugin-dts": "^0.3.0",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run build.ts",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "@usebruno/lang": "^0.22.0"
+  }
+}
