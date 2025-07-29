@@ -6,6 +6,13 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "homepage": "https://github.com/wilde-it/bruno-generator",
   "repository": {
     "type": "git",
@@ -19,6 +26,7 @@
     "dev": "bun run tsc --watch",
     "clean": "bun run rm -rf dist",
     "prepublishOnly": "bun run clean && bun run build",
+    "postinstall": "bun run build",
     "test": "bun test",
     "lint": "bun run tsc --noEmit",
     "release:minor": "node scripts/release-minor.js",
@@ -48,10 +56,9 @@
     "@types/bun": "latest",
     "@types/lodash": "^4.14.202"
   },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
+  "peerDependencies": {},
   "dependencies": {
-    "@usebruno/lang": "^0.26.0"
+    "@usebruno/lang": "^0.26.0",
+    "typescript": "^5"
   }
 }
