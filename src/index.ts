@@ -1,7 +1,11 @@
+import fs from 'fs';
+
 //@ts-ignore
 import { jsonToBruV2, jsonToCollectionBru } from '@usebruno/lang';
+
 import type { BrunoRequest, BrunoCollection } from './types';
 import { validateRequest, validateCollection } from './validator/validateRequest';
+
 
 /**
  * Converts a Bruno request object to .bru format string
@@ -65,6 +69,30 @@ export function generateRequest(request: BrunoRequest): string {
 export function generateCollection(collection: BrunoCollection): string {
   validateCollection(collection);
   return jsonToCollectionBru(collection);
+}
+
+/**
+ * Generates a bruno.json file content for collection metadata
+ * This creates the collection's metadata file, not the collection configuration
+ * 
+ * @param collectionName - The name of the collection
+ * @param version - The version of the collection (default: "1")
+ * @returns A JSON string for the bruno.json file
+ * 
+ * @example
+ * ```typescript
+ * const collectionJson = generateCollectionJson("My API Collection", "1");
+ * // Creates: { "version": "1", "name": "My API Collection", "type": "collection" }
+ * ```
+ */
+export function generateCollectionJson(collectionName: string, version: string = "1"): string {
+  const collectionMetadata = {
+    version: version,
+    name: collectionName,
+    type: "collection"
+  };
+  
+  return JSON.stringify(collectionMetadata, null, 2);
 }
 
 // Re-export all types for easy access

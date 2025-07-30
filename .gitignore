@@ -1,3 +1,6 @@
+#Custom ignores
+example/generated/*
+
 # dependencies (bun install)
 node_modules
 

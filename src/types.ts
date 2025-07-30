@@ -25,7 +25,7 @@ export interface BrunoMeta {
 
 // HTTP Method and Request
 export interface HttpRequest {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  method: 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head' | 'options';
   url: string;
   body?: BodyType ;
   auth?: AuthType;

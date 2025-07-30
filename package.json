@@ -1,6 +1,6 @@
 {
   "name": "@wilde-it/bruno-generator",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "TypeScript library for generating Bruno request and collection files with validation",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -9,11 +9,9 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "main": "./dist/index.js"
     }
   },
-  "homepage": "https://github.com/wilde-it/bruno-generator",
   "repository": {
     "type": "git",
     "url": "https://github.com/wilde-it/bruno-generator.git"
@@ -22,11 +20,9 @@
     "url": "https://github.com/wilde-it/bruno-generator/issues"
   },
   "scripts": {
-    "build": "bun run tsc",
-    "dev": "bun run tsc --watch",
+    "build": "bun run build.ts",
     "clean": "bun run rm -rf dist",
     "prepublishOnly": "bun run clean && bun run build",
-    "postinstall": "bun run build",
     "test": "bun test",
     "lint": "bun run tsc --noEmit",
     "release:minor": "node scripts/release-minor.js",
@@ -40,21 +36,15 @@
   ],
   "keywords": [
     "bruno",
-    "api",
     "testing",
-    "typescript",
-    "generator",
-    "rest",
-    "http",
-    "validation",
-    "url-validation",
-    "email-validation"
+    "generator"
   ],
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/lodash": "^4.14.202"
+    "@types/lodash": "^4.14.202",
+    "bun-plugin-dts": "^0.3.0"
   },
   "peerDependencies": {},
   "dependencies": {

@@ -13,7 +13,7 @@ export function validateRequest(request: BrunoRequest): void {
             throw new Error("GraphQL requests must have a 'graphql' body type");
         }
         
-        if (request.http.method !== 'POST') {
+        if (request.http.method !== 'post') {
             throw new Error("GraphQL requests must use POST method");
         }
     }

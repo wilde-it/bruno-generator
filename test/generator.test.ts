@@ -72,7 +72,7 @@ describe("Bruno Generator", () => {
           seq: 2
         },
         http: {
-          method: "POST",
+          method: "post",
           url: "https://api.example.com/users"
         },
         headers: [
@@ -110,7 +110,7 @@ describe("Bruno Generator", () => {
             seq: 1
           },
           http: {
-            method: "POST",
+            method: "post",
             url: "https://api.example.com/graphql",
             body: "graphql"
           },
@@ -132,7 +132,7 @@ describe("Bruno Generator", () => {
             seq: 1
           },
           http: {
-            method: "POST",
+            method: "post",
             url: "https://api.example.com/graphql"
           }
         };
@@ -148,7 +148,7 @@ describe("Bruno Generator", () => {
             seq: 1
           },
           http: {
-            method: "GET",
+            method: "get",
             url: "https://api.example.com/graphql",
             body: "graphql"
           },
@@ -170,7 +170,7 @@ describe("Bruno Generator", () => {
             seq: 1
           },
           http: {
-            method: "POST",
+            method: "post",
             url: "https://api.example.com/users",
             body: "graphql"
           },
@@ -192,7 +192,7 @@ describe("Bruno Generator", () => {
             seq: 1
           },
           http: {
-            method: "POST",
+            method: "post",
             url: "https://api.example.com/users"
           },
           body: {
@@ -207,7 +207,7 @@ describe("Bruno Generator", () => {
         // Test text body validation
         const textRequest: BrunoRequest = {
           meta: { name: "Test", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com", body: "text" },
+          http: { method: "post", url: "https://api.example.com", body: "text" },
           body: { text: "Hello World" }
         };
         expect(() => generateRequest(textRequest)).not.toThrow();
@@ -215,7 +215,7 @@ describe("Bruno Generator", () => {
         // Test XML body validation
         const xmlRequest: BrunoRequest = {
           meta: { name: "Test", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com", body: "xml" },
+          http: { method: "post", url: "https://api.example.com", body: "xml" },
           body: { xml: "<user><name>John</name></user>" }
         };
         expect(() => generateRequest(xmlRequest)).not.toThrow();
@@ -223,7 +223,7 @@ describe("Bruno Generator", () => {
         // Test form body validation
         const formRequest: BrunoRequest = {
           meta: { name: "Test", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com", body: "formUrlEncoded" },
+          http: { method: "post", url: "https://api.example.com", body: "formUrlEncoded" },
           body: { formUrlEncoded: [{ name: "username", value: "johndoe", enabled: true }] }
         };
         expect(() => generateRequest(formRequest)).not.toThrow();
@@ -351,7 +351,7 @@ describe("Bruno Generator", () => {
         // Test multipart form request
         const multipartRequest: BrunoRequest = {
           meta: { name: "Upload File", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com/upload", body: "multipartForm" },
+          http: { method: "post", url: "https://api.example.com/upload", body: "multipartForm" },
           body: {
             multipartForm: [
               { name: "file", value: "image.jpg", type: "file", enabled: true },
@@ -364,7 +364,7 @@ describe("Bruno Generator", () => {
         // Test file upload request
         const fileRequest: BrunoRequest = {
           meta: { name: "Direct File Upload", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com/files", body: "file" },
+          http: { method: "post", url: "https://api.example.com/files", body: "file" },
           body: {
             file: [{
               selected: true,
@@ -378,7 +378,7 @@ describe("Bruno Generator", () => {
         // Test SPARQL body
         const sparqlRequest: BrunoRequest = {
           meta: { name: "SPARQL Query", type: "http", seq: 1 },
-          http: { method: "POST", url: "https://api.example.com/sparql", body: "sparql" },
+          http: { method: "post", url: "https://api.example.com/sparql", body: "sparql" },
           body: { sparql: "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10" }
         };
         expect(() => generateRequest(sparqlRequest)).not.toThrow();
@@ -388,14 +388,14 @@ describe("Bruno Generator", () => {
         // Test request with no body - should pass
         const requestWithoutBody: BrunoRequest = {
           meta: { name: "Get User", type: "http", seq: 1 },
-          http: { method: "GET", url: "https://api.example.com/users/123" }
+          http: { method: "get", url: "https://api.example.com/users/123" }
         };
         expect(() => generateRequest(requestWithoutBody)).not.toThrow();
 
         // Test request with empty body object - should pass
         const requestWithEmptyBody: BrunoRequest = {
           meta: { name: "Get User", type: "http", seq: 1 },
-          http: { method: "GET", url: "https://api.example.com/users/123" },
+          http: { method: "get", url: "https://api.example.com/users/123" },
           body: {}
         };
         expect(() => generateRequest(requestWithEmptyBody)).not.toThrow();
@@ -449,7 +449,7 @@ describe("Bruno Generator", () => {
           seq: 1
         },
         http: {
-          method: "GET",
+          method: "get",
           url: "https://api.example.com"
         }
       };
