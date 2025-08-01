@@ -1,10 +1,10 @@
 import fs from 'fs';
 
 //@ts-ignore
-import { jsonToBruV2, jsonToCollectionBru } from '@usebruno/lang';
+import { jsonToBruV2, jsonToCollectionBru, envJsonToBruV2 } from '@usebruno/lang';
 
-import type { BrunoRequest, BrunoCollection } from './types';
-import { validateRequest, validateCollection } from './validator/validateRequest';
+import type { BrunoRequest, BrunoCollection, BrunoEnvironment } from './types';
+import { validateRequest, validateCollection, validateEnvironment } from './validator/validateRequest';
 
 
 /**
@@ -22,7 +22,7 @@ import { validateRequest, validateCollection } from './validator/validateRequest
  *     type: "http"
  *   },
  *   http: {
- *     method: "GET",
+ *     method: "get",
  *     url: "https://api.example.com/users/{{userId}}"
  *   },
  *   headers: [
@@ -69,6 +69,31 @@ export function generateRequest(request: BrunoRequest): string {
 export function generateCollection(collection: BrunoCollection): string {
   validateCollection(collection);
   return jsonToCollectionBru(collection);
+}
+
+/**
+ * Converts a Bruno environment object to environment .bru format string
+ * Used for generating environment variable files
+ * 
+ * @param environment - The environment configuration object
+ * @returns A .bru formatted string for the environment
+ * 
+ * @example
+ * ```typescript
+ * const environment: BrunoEnvironment = {
+ *   variables: [
+ *     { name: "baseUrl", value: "https://api.example.com", enabled: true },
+ *     { name: "apiKey", value: "secret-key-123", enabled: true, secret: true },
+ *     { name: "timeout", value: "30000", enabled: false }
+ *   ]
+ * };
+ * 
+ * const bruString = generateEnvironment(environment);
+ * ```
+ */
+export function generateEnvironment(environment: BrunoEnvironment): string {
+  validateEnvironment(environment);
+  return envJsonToBruV2(environment);
 }
 
 /**

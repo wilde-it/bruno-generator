@@ -1,9 +1,10 @@
 import { expect, test, describe } from "bun:test";
 import { 
   generateRequest, 
-  generateCollection, 
+  generateCollection,
+  generateEnvironment,
 } from "../src/index";
-import type { BrunoCollection, BrunoRequest, HttpMethod } from "../src/types";
+import type { BrunoCollection, BrunoRequest, BrunoEnvironment, HttpMethod } from "../src/types";
 
 describe("Bruno Generator", () => {
   describe("generateRequest", () => {
@@ -475,6 +476,134 @@ describe("Bruno Generator", () => {
       expect(result).toContain("meta {");
       expect(result).toContain("name: Empty Collection");
       expect(result).toContain("type: collection");
+    });
+  });
+
+  describe("generateEnvironment", () => {
+    test("should generate a basic environment", () => {
+      const environment: BrunoEnvironment = {
+        variables: [
+          { name: "baseUrl", value: "https://api.example.com", enabled: true },
+          { name: "version", value: "v1", enabled: true },
+          { name: "timeout", value: "30000", enabled: false }
+        ]
+      };
+
+      const result = generateEnvironment(environment);
+      
+      expect(result).toContain("vars {");
+      expect(result).toContain("baseUrl: https://api.example.com");
+      expect(result).toContain("version: v1");
+      expect(result).toContain("~timeout: 30000");
+    });
+
+    test("should generate environment with secret variables", () => {
+      const environment: BrunoEnvironment = {
+        variables: [
+          { name: "apiKey", value: "secret-123", enabled: true, secret: true },
+          { name: "token", value: "bearer-token", enabled: false, secret: true },
+          { name: "publicVar", value: "public-value", enabled: true }
+        ]
+      };
+
+      const result = generateEnvironment(environment);
+      
+      expect(result).toContain("vars {");
+      expect(result).toContain("publicVar: public-value");
+      expect(result).toContain("vars:secret [");
+      expect(result).toContain("apiKey");
+      expect(result).toContain("~token");
+    });
+
+    test("should generate environment with variables without values", () => {
+      const environment: BrunoEnvironment = {
+        variables: [
+          { name: "userId", value: "testUser", enabled: true },
+          { name: "token", enabled: true, secret: true }, // No value provided
+          { name: "apiKey", enabled: false, secret: true } // No value, disabled
+        ]
+      };
+
+      const result = generateEnvironment(environment);
+      
+      expect(result).toContain("vars {");
+      expect(result).toContain("userId: testUser");
+      expect(result).toContain("vars:secret [");
+      expect(result).toContain("token");
+      expect(result).toContain("~apiKey");
+    });
+
+    test("should validate environment with missing variables", () => {
+      const invalidEnvironment = {} as BrunoEnvironment;
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment must have a variables array");
+    });
+
+    test("should validate environment with invalid variables array", () => {
+      const invalidEnvironment = { variables: "not-an-array" } as any;
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment variables must be an array");
+    });
+
+    test("should validate environment variables with missing name", () => {
+      const invalidEnvironment: BrunoEnvironment = {
+        variables: [
+          { name: "", value: "test", enabled: true }
+        ]
+      };
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment variable at index 0 must have a valid name");
+    });
+
+    test("should validate environment variables with invalid value type", () => {
+      const invalidEnvironment: BrunoEnvironment = {
+        variables: [
+          { name: "test", value: 123 as any, enabled: true }
+        ]
+      };
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment variable 'test' must have a string value");
+    });
+
+    test("should validate environment variables with missing enabled", () => {
+      const invalidEnvironment: BrunoEnvironment = {
+        variables: [
+          { name: "test", value: "value" } as any
+        ]
+      };
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment variable 'test' must have an enabled boolean property");
+    });
+
+    test("should validate environment variables with invalid secret type", () => {
+      const invalidEnvironment: BrunoEnvironment = {
+        variables: [
+          { name: "test", value: "value", enabled: true, secret: "yes" as any }
+        ]
+      };
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Environment variable 'test' secret property must be a boolean");
+    });
+
+    test("should validate duplicate variable names", () => {
+      const invalidEnvironment: BrunoEnvironment = {
+        variables: [
+          { name: "duplicate", value: "value1", enabled: true },
+          { name: "duplicate", value: "value2", enabled: true }
+        ]
+      };
+
+      expect(() => generateEnvironment(invalidEnvironment)).toThrow("Duplicate environment variable names found: duplicate");
+    });
+
+    test("should handle empty variables array", () => {
+      const environment: BrunoEnvironment = {
+        variables: []
+      };
+
+      const result = generateEnvironment(environment);
+      expect(result).toBeDefined();
+      expect(result.length).toBeGreaterThan(0);
     });
   });
 });

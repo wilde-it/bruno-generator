@@ -1,4 +1,4 @@
-import { generateRequest, generateCollection, generateCollectionJson, BrunoRequest, BrunoCollection } from '../src/index';
+import { generateRequest, generateCollection, generateCollectionJson, generateEnvironment, BrunoRequest, BrunoCollection, BrunoEnvironment } from '../src/index';
 import fs from 'fs';
 import path from 'path';
 
@@ -170,10 +170,33 @@ expect(res.headers).to.have.property('content-type');
 }
 
 /**
- * Example 4: Generate bruno.json metadata file
+ * Example 4: Generate environment configuration on collection level.
+ */
+function exampleEnvironment() {
+  console.log('\n=== Example 4: Environment Configuration ===');
+
+  const apiEnvironment: BrunoEnvironment = {
+    variables: [
+      { name: "userId", value: "testUser", enabled: true },
+      { name: "legacyUrl", value: "https://old.api.example.com", enabled: false },
+      { name: "token", enabled: true, secret: true },
+    ]
+  };
+
+  const bruContent = generateEnvironment(apiEnvironment);
+  console.log('Generated environment .bru content:');
+  console.log(bruContent);
+
+  // Save environment configuration to .bru file (Bruno expects environments in 'environments/' folder)
+  const environmentBruPath = path.join(__dirname, 'generated', 'environments', 'development.bru');
+  saveToFile(environmentBruPath, bruContent);
+}
+
+/**
+ * Example 5: Generate bruno.json metadata file
  */
 function exampleCollectionJson() {
-  console.log('\n=== Example 4: Collection Metadata (bruno.json) ===');
+  console.log('\n=== Example 5: Collection Metadata (bruno.json) ===');
 
   const collectionName = "User Management API";
   const version = "1";
@@ -205,8 +228,12 @@ function runExamples() {
   console.log('Test 3: Collection configuration generation...');
   const collectionContent = exampleCollection();
 
-  // Test 4: Verify bruno.json generation
-  console.log('Test 4: Bruno.json metadata generation...');
+  // Test 4: Verify environment generation
+  console.log('Test 4: Environment configuration generation...');
+  const environmentContent = exampleEnvironment();
+
+  // Test 5: Verify bruno.json generation
+  console.log('Test 5: Bruno.json metadata generation...');
   const brunoJsonContent = exampleCollectionJson();
 
 }

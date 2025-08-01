@@ -202,6 +202,17 @@ export interface BrunoCollection {
   docs?: string;
 }
 
+// Environment types
+export interface EnvironmentVariable extends EnabledItem {
+  name: string;
+  value?: string;
+  secret?: boolean;
+}
+
+export interface BrunoEnvironment {
+  variables: EnvironmentVariable[];
+}
+
 // Export utility types for easier usage
 export type AuthType = 'awsv4' | 'basic' | 'wsse' | 'bearer' | 'digest' | 'ntlm' | 'oauth2' | 'apikey';
 export type HttpMethod = HttpRequest['method'];

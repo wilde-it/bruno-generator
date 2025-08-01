@@ -1,4 +1,4 @@
-import { BrunoRequest, BrunoCollection } from '../types';
+import { BrunoRequest, BrunoCollection, BrunoEnvironment } from '../types';
 
 
 export function validateRequest(request: BrunoRequest): void {
@@ -59,5 +59,42 @@ export function validateCollection(collection: BrunoCollection): void {
 
     if (collection.meta.type !== 'collection') {
         throw new Error("Collection meta type must be 'collection'");
+    }
+}
+
+export function validateEnvironment(environment: BrunoEnvironment): void {
+    // Basic validation for environment
+    if (!environment.variables) {
+        throw new Error("Environment must have a variables array");
+    }
+
+    if (!Array.isArray(environment.variables)) {
+        throw new Error("Environment variables must be an array");
+    }
+
+    // Validate each variable
+    environment.variables.forEach((variable, index) => {
+        if (!variable.name || typeof variable.name !== 'string') {
+            throw new Error(`Environment variable at index ${index} must have a valid name`);
+        }
+
+        if (variable.value !== undefined && typeof variable.value !== 'string') {
+            throw new Error(`Environment variable '${variable.name}' must have a string value`);
+        }
+
+        if (typeof variable.enabled !== 'boolean') {
+            throw new Error(`Environment variable '${variable.name}' must have an enabled boolean property`);
+        }
+
+        if (variable.secret !== undefined && typeof variable.secret !== 'boolean') {
+            throw new Error(`Environment variable '${variable.name}' secret property must be a boolean`);
+        }
+    });
+
+    // Check for duplicate variable names
+    const names = environment.variables.map(v => v.name);
+    const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+    if (duplicates.length > 0) {
+        throw new Error(`Duplicate environment variable names found: ${duplicates.join(', ')}`);
     }
 }
