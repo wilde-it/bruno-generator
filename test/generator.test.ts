@@ -15,7 +15,7 @@ describe("Bruno Generator", () => {
           seq: 1
         },
         http: {
-          method: "GET" as HttpMethod,
+          method: "get",
           url: "https://api.example.com/users/{{userId}}"
         },
         headers: [
@@ -33,7 +33,7 @@ describe("Bruno Generator", () => {
       expect(result).toContain("name: Get User Profile");
       expect(result).toContain("type: http");
       expect(result).toContain("seq: 1");
-      expect(result).toContain("GET {");
+      expect(result).toContain("get {");
       expect(result).toContain("url: https://api.example.com/users/{{userId}}");
       expect(result).toContain("headers {");
       expect(result).toContain("Authorization: Bearer {{token}}");
@@ -50,7 +50,7 @@ describe("Bruno Generator", () => {
           seq: 1
         },
         http: {
-          method: "GET" as HttpMethod,
+          method: "get",
           url: "https://api.example.com/users/123"
         },
         headers: [
@@ -92,7 +92,7 @@ describe("Bruno Generator", () => {
       
       expect(result).toContain("meta {");
       expect(result).toContain("name: Create User");
-      expect(result).toContain("POST {");
+      expect(result).toContain("post {");
       expect(result).toContain("url: https://api.example.com/users");
       expect(result).toContain("headers {");
       expect(result).toContain("Content-Type: application/json");
@@ -234,7 +234,7 @@ describe("Bruno Generator", () => {
             name: "text",
             request: {
               meta: { name: "Test", type: "http", seq: 1 },
-              http: { method: "POST", url: "https://api.example.com", body: "text" },
+              http: { method: "post", url: "https://api.example.com", body: "text" },
               body: {}
             },
             expectedError: "Text body must be provided for HTTP requests with 'text' body type"
@@ -243,7 +243,7 @@ describe("Bruno Generator", () => {
             name: "xml",
             request: {
               meta: { name: "Test", type: "http", seq: 1 },
-              http: { method: "POST", url: "https://api.example.com", body: "xml" },
+              http: { method: "post", url: "https://api.example.com", body: "xml" },
               body: {}
             },
             expectedError: "XML body must be provided for HTTP requests with 'xml' body type"
@@ -252,7 +252,7 @@ describe("Bruno Generator", () => {
             name: "sparql",
             request: {
               meta: { name: "Test", type: "http", seq: 1 },
-              http: { method: "POST", url: "https://api.example.com", body: "sparql" },
+              http: { method: "post", url: "https://api.example.com", body: "sparql" },
               body: {}
             },
             expectedError: "SPARQL body must be provided for HTTP requests with 'sparql' body type"
@@ -456,7 +456,7 @@ describe("Bruno Generator", () => {
 
       const result = generateRequest(minimalRequest);
       
-      expect(result).toContain("GET {");
+      expect(result).toContain("get {");
       expect(result).toContain("url: https://api.example.com");
       expect(result.length).toBeGreaterThan(10);
     });
