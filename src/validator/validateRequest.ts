@@ -1,4 +1,4 @@
-import { BrunoRequest, BrunoCollection, BrunoEnvironment } from '../types';
+import { BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from '../types';
 
 
 export function validateRequest(request: BrunoRequest): void {
@@ -96,5 +96,24 @@ export function validateEnvironment(environment: BrunoEnvironment): void {
     const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
     if (duplicates.length > 0) {
         throw new Error(`Duplicate environment variable names found: ${duplicates.join(', ')}`);
+    }
+}
+
+export function validateFolder(folder: BrunoFolder): void {
+    // Basic validation for folder
+    if (!folder.meta) {
+        throw new Error("Folder must have a meta object");
+    }
+
+    if (!folder.meta.name || typeof folder.meta.name !== 'string') {
+        throw new Error("Folder must have a valid name in meta");
+    }
+
+    if (typeof folder.meta.seq !== 'number') {
+        throw new Error("Folder must have a numeric sequence (seq) in meta");
+    }
+
+    if (folder.meta.seq < 0) {
+        throw new Error("Folder sequence (seq) must be a non-negative number");
     }
 }

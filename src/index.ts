@@ -3,8 +3,8 @@ import fs from 'fs';
 //@ts-ignore
 import { jsonToBruV2, jsonToCollectionBru, envJsonToBruV2 } from '@usebruno/lang';
 
-import type { BrunoRequest, BrunoCollection, BrunoEnvironment } from './types';
-import { validateRequest, validateCollection, validateEnvironment } from './validator/validateRequest';
+import type { BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from './types';
+import { validateRequest, validateCollection, validateEnvironment, validateFolder } from './validator/validateRequest';
 
 
 /**
@@ -97,6 +97,37 @@ export function generateEnvironment(environment: BrunoEnvironment): string {
 }
 
 /**
+ * Converts a Bruno folder object to folder .bru format string
+ * Used for generating folder metadata files that control folder display name and sequence
+ * 
+ * @param folder - The folder configuration object
+ * @returns A .bru formatted string for the folder
+ * 
+ * @example
+ * ```typescript
+ * const folder: BrunoFolder = {
+ *   meta: {
+ *     name: "User Management",
+ *     seq: 1
+ *   }
+ * };
+ * 
+ * const bruString = generateFolder(folder);
+ * // Returns folder.bru content as string
+ * ```
+ */
+export function generateFolder(folder: BrunoFolder): string {
+  validateFolder(folder);
+  
+  // Generate folder.bru content
+  return `meta {
+  name: ${folder.meta.name}
+  seq: ${folder.meta.seq}
+}
+`;
+}
+
+/**
  * Generates a bruno.json file content for collection metadata
  * This creates the collection's metadata file, not the collection configuration
  * 
@@ -118,6 +149,43 @@ export function generateCollectionJson(collectionName: string, version: string =
   };
   
   return JSON.stringify(collectionMetadata, null, 2);
+}
+
+/**
+ * Creates a filesystem folder and generates its folder.bru file
+ * This is a utility function that combines filesystem operations with content generation
+ * 
+ * @param folderPath - The filesystem path where the folder should be created
+ * @param folder - The folder configuration object
+ * @returns The folder path that was created
+ * 
+ * @example
+ * ```typescript
+ * const folder: BrunoFolder = {
+ *   meta: {
+ *     name: "User Management",
+ *     seq: 1
+ *   }
+ * };
+ * 
+ * const createdPath = createFolder("./my-collection/users", folder);
+ * // Creates folder at ./my-collection/users/ and ./my-collection/users/folder.bru
+ * ```
+ */
+export function createFolder(folderPath: string, folder: BrunoFolder): string {
+  // Create the filesystem folder if it doesn't exist
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
+  
+  // Generate the folder.bru content using the pure function
+  const folderContent = generateFolder(folder);
+  
+  // Write the folder.bru file
+  const folderBruPath = `${folderPath}/folder.bru`;
+  fs.writeFileSync(folderBruPath, folderContent, 'utf8');
+  
+  return folderPath;
 }
 
 // Re-export all types for easy access

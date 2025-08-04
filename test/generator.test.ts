@@ -3,8 +3,10 @@ import {
   generateRequest, 
   generateCollection,
   generateEnvironment,
+  generateFolder,
+  createFolder,
 } from "../src/index";
-import type { BrunoCollection, BrunoRequest, BrunoEnvironment, HttpMethod } from "../src/types";
+import type { BrunoCollection, BrunoRequest, BrunoEnvironment, BrunoFolder, HttpMethod } from "../src/types";
 
 describe("Bruno Generator", () => {
   describe("generateRequest", () => {
@@ -604,6 +606,202 @@ describe("Bruno Generator", () => {
       const result = generateEnvironment(environment);
       expect(result).toBeDefined();
       expect(result.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("generateFolder", () => {
+    test("should generate folder.bru content as string", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "User Management",
+          seq: 1
+        }
+      };
+
+      const result = generateFolder(folder);
+      
+      expect(typeof result).toBe("string");
+      expect(result).toContain("meta {");
+      expect(result).toContain("name: User Management");
+      expect(result).toContain("seq: 1");
+      expect(result).toContain("}");
+    });
+
+    test("should generate correct folder.bru format structure", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "API Endpoints",
+          seq: 5
+        }
+      };
+
+      const result = generateFolder(folder);
+      
+      // Check complete format structure
+      expect(result.trim()).toMatch(/^meta \{\s+name: API Endpoints\s+seq: 5\s+\}$/);
+    });
+
+    test("should handle folder names with spaces and special characters", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "User-Management & Admin Tools",
+          seq: 10
+        }
+      };
+
+      const result = generateFolder(folder);
+      
+      expect(result).toContain("name: User-Management & Admin Tools");
+      expect(result).toContain("seq: 10");
+    });
+
+    test("should validate folder with missing meta", () => {
+      const invalidFolder = {} as BrunoFolder;
+
+      expect(() => generateFolder(invalidFolder)).toThrow("Folder must have a meta object");
+    });
+
+    test("should validate folder with missing name", () => {
+      const invalidFolder: BrunoFolder = {
+        meta: {
+          name: "",
+          seq: 1
+        }
+      };
+
+      expect(() => generateFolder(invalidFolder)).toThrow("Folder must have a valid name in meta");
+    });
+
+    test("should validate folder with invalid name type", () => {
+      const invalidFolder: BrunoFolder = {
+        meta: {
+          name: 123 as any,
+          seq: 1
+        }
+      };
+
+      expect(() => generateFolder(invalidFolder)).toThrow("Folder must have a valid name in meta");
+    });
+
+    test("should validate folder with missing sequence", () => {
+      const invalidFolder: BrunoFolder = {
+        meta: {
+          name: "Test Folder",
+          seq: "invalid" as any
+        }
+      };
+
+      expect(() => generateFolder(invalidFolder)).toThrow("Folder must have a numeric sequence (seq) in meta");
+    });
+
+    test("should validate folder with negative sequence", () => {
+      const invalidFolder: BrunoFolder = {
+        meta: {
+          name: "Test Folder",
+          seq: -1
+        }
+      };
+
+      expect(() => generateFolder(invalidFolder)).toThrow("Folder sequence (seq) must be a non-negative number");
+    });
+
+    test("should handle zero sequence", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "First Folder",
+          seq: 0
+        }
+      };
+
+      const result = generateFolder(folder);
+      expect(result).toContain("seq: 0");
+    });
+  });
+
+  describe("createFolder", () => {
+    test("should create folder directory and folder.bru file", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "Test Folder",
+          seq: 1
+        }
+      };
+
+      const testPath = "./test-output/create-folder-test1";
+      const result = createFolder(testPath, folder);
+      
+      expect(result).toBe(testPath);
+      // Check if directory was created
+      expect(require('fs').existsSync(testPath)).toBe(true);
+      // Check if folder.bru was created
+      expect(require('fs').existsSync(`${testPath}/folder.bru`)).toBe(true);
+      
+      // Clean up
+      require('fs').rmSync(testPath, { recursive: true, force: true });
+    });
+
+    test("should create folder with correct content", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "User Management",
+          seq: 5
+        }
+      };
+
+      const testPath = "./test-output/create-folder-test2";
+      const result = createFolder(testPath, folder);
+      
+      expect(result).toBe(testPath);
+      
+      // Read the generated folder.bru content
+      const folderContent = require('fs').readFileSync(`${testPath}/folder.bru`, 'utf8');
+      expect(folderContent).toContain("meta {");
+      expect(folderContent).toContain("name: User Management");
+      expect(folderContent).toContain("seq: 5");
+      
+      // Clean up
+      require('fs').rmSync(testPath, { recursive: true, force: true });
+    });
+
+    test("should handle existing directories gracefully", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "Existing Folder",
+          seq: 1
+        }
+      };
+
+      const testPath = "./test-output/create-folder-test3";
+      
+      // Pre-create the directory
+      require('fs').mkdirSync(testPath, { recursive: true });
+      
+      const result = createFolder(testPath, folder);
+      
+      expect(result).toBe(testPath);
+      expect(require('fs').existsSync(`${testPath}/folder.bru`)).toBe(true);
+      
+      // Clean up
+      require('fs').rmSync(testPath, { recursive: true, force: true });
+    });
+
+    test("should create nested directory paths", () => {
+      const folder: BrunoFolder = {
+        meta: {
+          name: "Nested Folder",
+          seq: 1
+        }
+      };
+
+      const testPath = "./test-output/deep/nested/path/folder";
+      const result = createFolder(testPath, folder);
+      
+      expect(result).toBe(testPath);
+      expect(require('fs').existsSync(testPath)).toBe(true);
+      expect(require('fs').existsSync(`${testPath}/folder.bru`)).toBe(true);
+      
+      // Clean up
+      require('fs').rmSync("./test-output/deep", { recursive: true, force: true });
     });
   });
 });

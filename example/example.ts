@@ -1,4 +1,4 @@
-import { generateRequest, generateCollection, generateCollectionJson, generateEnvironment, BrunoRequest, BrunoCollection, BrunoEnvironment } from '../src/index';
+import { generateRequest, generateCollection, generateCollectionJson, generateEnvironment, generateFolder, createFolder, BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from '../src/index';
 import fs from 'fs';
 import path from 'path';
 
@@ -39,8 +39,8 @@ expect(res.body.user).to.have.property('email');
   console.log('Generated .bru content:');
   //console.log(bruContent);
 
-  // Save to file for testing
-  const outputPath = path.join(__dirname, 'generated', 'get-user.bru');
+  // Save to file for testing (in users folder)
+  const outputPath = path.join(__dirname, 'generated', 'users', 'get-user.bru');
   saveToFile(outputPath, bruContent);
 
 }
@@ -97,8 +97,8 @@ console.log('Creating user:', bru.getVar('userName'));
   console.log('Generated .bru content:');
   //console.log(bruContent);
 
-  // Save to file for testing
-  const outputPath = path.join(__dirname, 'generated', 'create-user.bru');
+  // Save to file for testing (in users folder)
+  const outputPath = path.join(__dirname, 'generated', 'users', 'create-user.bru');
   saveToFile(outputPath, bruContent);
 
 }
@@ -193,10 +193,33 @@ function exampleEnvironment() {
 }
 
 /**
- * Example 5: Generate bruno.json metadata file
+ * Example 5: Generate folder configuration (folder.bru file)
+ */
+function exampleFolder() {
+  console.log('\n=== Example 5: Folder Configuration (folder.bru) ===');
+
+  const userFolder: BrunoFolder = {
+    meta: {
+      name: "User Management",
+      seq: 1
+    }
+  };
+
+  // Create folder with directory and folder.bru file in one step
+  // This folder will contain the user-related requests (get-user.bru, create-user.bru)
+  const userFolderPath = path.join(__dirname, 'generated', 'users');
+  
+  const createdUserPath = createFolder(userFolderPath, userFolder);
+  
+  console.log('Created User Management folder at:', createdUserPath);
+  console.log('This folder will contain get-user.bru and create-user.bru requests');
+}
+
+/**
+ * Example 6: Generate bruno.json metadata file
  */
 function exampleCollectionJson() {
-  console.log('\n=== Example 5: Collection Metadata (bruno.json) ===');
+  console.log('\n=== Example 6: Collection Metadata (bruno.json) ===');
 
   const collectionName = "User Management API";
   const version = "1";
@@ -216,24 +239,28 @@ function exampleCollectionJson() {
 function runExamples() {
   console.log('\n=== Running Examples ===');
 
-  // Test 1: Verify GET request generation
-  console.log('Test 1: GET request generation...');
-  const getRequestContent = exampleGetRequest();
-
-  // Test 2: Verify POST request generation  
-  console.log('Test 2: POST request generation...');
-  const postRequestContent = examplePostRequest();
-
-  // Test 3: Verify collection generation
-  console.log('Test 3: Collection configuration generation...');
+  // Test 1: Verify collection generation
+  console.log('Test 1: Collection configuration generation...');
   const collectionContent = exampleCollection();
 
-  // Test 4: Verify environment generation
-  console.log('Test 4: Environment configuration generation...');
+  // Test 2: Verify environment generation
+  console.log('Test 2: Environment configuration generation...');
   const environmentContent = exampleEnvironment();
 
-  // Test 5: Verify bruno.json generation
-  console.log('Test 5: Bruno.json metadata generation...');
+  // Test 3: Verify folder generation (create folder structure first)
+  console.log('Test 3: Folder configuration generation...');
+  const folderContent = exampleFolder();
+
+  // Test 4: Verify GET request generation (now goes into existing folder)
+  console.log('Test 4: GET request generation...');
+  const getRequestContent = exampleGetRequest();
+
+  // Test 5: Verify POST request generation (now goes into existing folder)
+  console.log('Test 5: POST request generation...');
+  const postRequestContent = examplePostRequest();
+
+  // Test 6: Verify bruno.json generation
+  console.log('Test 6: Bruno.json metadata generation...');
   const brunoJsonContent = exampleCollectionJson();
 
 }

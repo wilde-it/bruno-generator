@@ -213,6 +213,14 @@ export interface BrunoEnvironment {
   variables: EnvironmentVariable[];
 }
 
+// Folder types
+export interface BrunoFolder {
+  meta: {
+    name: string;
+    seq: number;
+  };
+}
+
 // Export utility types for easier usage
 export type AuthType = 'awsv4' | 'basic' | 'wsse' | 'bearer' | 'digest' | 'ntlm' | 'oauth2' | 'apikey';
 export type HttpMethod = HttpRequest['method'];
