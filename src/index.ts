@@ -1,4 +1,4 @@
-import fs from 'fs';
+import * as fs from 'fs';
 
 //@ts-ignore
 import { jsonToBruV2, jsonToCollectionBru, envJsonToBruV2 } from '@usebruno/lang';
