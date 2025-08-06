@@ -100,6 +100,9 @@ export function generateEnvironment(environment: BrunoEnvironment): string {
  * Converts a Bruno folder object to folder .bru format string
  * Used for generating folder metadata files that control folder display name and sequence
  * 
+ * Note: Internally uses the same Bruno language engine as generateCollection()
+ * since folders and collections share the same underlying .bru format structure.
+ * 
  * @param folder - The folder configuration object
  * @returns A .bru formatted string for the folder
  * 
@@ -119,12 +122,9 @@ export function generateEnvironment(environment: BrunoEnvironment): string {
 export function generateFolder(folder: BrunoFolder): string {
   validateFolder(folder);
   
-  // Generate folder.bru content
-  return `meta {
-  name: ${folder.meta.name}
-  seq: ${folder.meta.seq}
-}
-`;
+  // Use the same Bruno language engine as collections
+  // Folders are simply collections with minimal metadata
+  return jsonToCollectionBru(folder);
 }
 
 /**

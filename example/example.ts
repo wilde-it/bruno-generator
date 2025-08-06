@@ -39,8 +39,8 @@ expect(res.body.user).to.have.property('email');
   console.log('Generated .bru content:');
   //console.log(bruContent);
 
-  // Save to file for testing (in users folder)
-  const outputPath = path.join(__dirname, 'generated', 'users', 'get-user.bru');
+  // Save to file for testing (in nested profiles folder)
+  const outputPath = path.join(__dirname, 'generated', 'users', 'profiles', 'get-user.bru');
   saveToFile(outputPath, bruContent);
 
 }
@@ -194,10 +194,12 @@ function exampleEnvironment() {
 
 /**
  * Example 5: Generate folder configuration (folder.bru file)
+ * Demonstrates nested folder creation
  */
 function exampleFolder() {
   console.log('\n=== Example 5: Folder Configuration (folder.bru) ===');
 
+  // Create main users folder
   const userFolder: BrunoFolder = {
     meta: {
       name: "User Management",
@@ -205,14 +207,24 @@ function exampleFolder() {
     }
   };
 
-  // Create folder with directory and folder.bru file in one step
-  // This folder will contain the user-related requests (get-user.bru, create-user.bru)
   const userFolderPath = path.join(__dirname, 'generated', 'users');
-  
   const createdUserPath = createFolder(userFolderPath, userFolder);
   
   console.log('Created User Management folder at:', createdUserPath);
-  console.log('This folder will contain get-user.bru and create-user.bru requests');
+
+  // Create nested profiles folder within users
+  const profilesFolder: BrunoFolder = {
+    meta: {
+      name: "User Profiles",
+      seq: 1
+    }
+  };
+
+  const profilesFolderPath = path.join(__dirname, 'generated', 'users', 'profiles');
+  const createdProfilesPath = createFolder(profilesFolderPath, profilesFolder);
+  
+  console.log('Created nested User Profiles folder at:', createdProfilesPath);
+  console.log('This nested structure will contain: users/ (create-user.bru) and users/profiles/ (get-user.bru)');
 }
 
 /**
