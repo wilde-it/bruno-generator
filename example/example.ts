@@ -1,6 +1,6 @@
-import { generateRequest, generateCollection, generateCollectionJson, generateEnvironment, generateFolder, createFolder, BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from '../src/index';
-import fs from 'fs';
-import path from 'path';
+import { generateRequest, generateCollection, generateCollectionJson, generateEnvironment, createFolder, BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from "../src";
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Example 1: Generate a simple GET request with authentication
@@ -37,7 +37,6 @@ expect(res.body.user).to.have.property('email');
 
   const bruContent = generateRequest(getUserRequest);
   console.log('Generated .bru content:');
-  //console.log(bruContent);
 
   // Save to file for testing (in nested profiles folder)
   const outputPath = path.join(__dirname, 'generated', 'users', 'profiles', 'get-user.bru');
@@ -95,7 +94,6 @@ console.log('Creating user:', bru.getVar('userName'));
 
   const bruContent = generateRequest(createUserRequest);
   console.log('Generated .bru content:');
-  //console.log(bruContent);
 
   // Save to file for testing (in users folder)
   const outputPath = path.join(__dirname, 'generated', 'users', 'create-user.bru');
@@ -162,7 +160,6 @@ expect(res.headers).to.have.property('content-type');
 
   const bruContent = generateCollection(apiCollection);
   console.log('Generated collection .bru content:');
-  //console.log(bruContent);
 
   // Save collection configuration to .bru file
   const collectionBruPath = path.join(__dirname, 'generated', 'collection.bru');
@@ -199,7 +196,7 @@ function exampleEnvironment() {
 function exampleFolder() {
   console.log('\n=== Example 5: Folder Configuration (folder.bru) ===');
 
-  // Create main users folder
+  // Create the main users folder
   const userFolder: BrunoFolder = {
     meta: {
       name: "User Management",
@@ -253,27 +250,27 @@ function runExamples() {
 
   // Test 1: Verify collection generation
   console.log('Test 1: Collection configuration generation...');
-  const collectionContent = exampleCollection();
+  exampleCollection();
 
   // Test 2: Verify environment generation
   console.log('Test 2: Environment configuration generation...');
-  const environmentContent = exampleEnvironment();
+  exampleEnvironment();
 
   // Test 3: Verify folder generation (create folder structure first)
   console.log('Test 3: Folder configuration generation...');
-  const folderContent = exampleFolder();
+  exampleFolder();
 
   // Test 4: Verify GET request generation (now goes into existing folder)
   console.log('Test 4: GET request generation...');
-  const getRequestContent = exampleGetRequest();
+  exampleGetRequest();
 
   // Test 5: Verify POST request generation (now goes into existing folder)
   console.log('Test 5: POST request generation...');
-  const postRequestContent = examplePostRequest();
+  examplePostRequest();
 
   // Test 6: Verify bruno.json generation
   console.log('Test 6: Bruno.json metadata generation...');
-  const brunoJsonContent = exampleCollectionJson();
+  exampleCollectionJson();
 
 }
 

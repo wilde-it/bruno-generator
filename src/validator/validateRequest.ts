@@ -53,7 +53,7 @@ export function validateRequest(request: BrunoRequest): void {
 
 export function validateCollection(collection: BrunoCollection): void {
     // Basic validation for collection
-    if (!collection.meta || !collection.meta.name) {
+    if (!collection.meta?.name) {
         throw new Error("Collection must have a meta object with a name");
     }
 
