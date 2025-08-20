@@ -1,0 +1,119 @@
+import { BrunoRequest, BrunoCollection, BrunoEnvironment, BrunoFolder } from '../types';
+
+
+export function validateRequest(request: BrunoRequest): void {
+    // Validate HTTP method
+    
+    if (request.meta.type === 'graphql') {
+        if(!request.body || !request.http.body) {
+            throw new Error("GraphQL requests must have a body defined");
+        }
+
+        if (request.http.body !== 'graphql' || !request.body.graphql) {
+            throw new Error("GraphQL requests must have a 'graphql' body type");
+        }
+        
+        if (request.http.method !== 'post') {
+            throw new Error("GraphQL requests must use POST method");
+        }
+    }
+
+    if (request.meta.type === 'http') {
+        if (request.http.body && request.http.body === 'graphql') {
+            throw new Error("Body type can not be 'graphql' for HTTP requests");
+        }
+    }
+
+    // If there's a body, check if it adheres to the specified type, if any.
+    if (request.body) {
+        if (typeof request.body === 'object' && 'json' in request.body && !request.body.json) {
+            throw new Error("JSON body must be provided if 'json' is specified in body type");
+        }
+    }
+    if (request.http.body && request.http.body === 'text' && !request.body?.text) {
+        throw new Error("Text body must be provided for HTTP requests with 'text' body type");
+    }
+    if (request.http.body && request.http.body === 'xml' && !request.body?.xml) {
+        throw new Error("XML body must be provided for HTTP requests with 'xml' body type");
+    }
+    if (request.http.body && request.http.body === 'sparql' && !request.body?.sparql) {
+        throw new Error("SPARQL body must be provided for HTTP requests with 'sparql' body type");
+    }
+    if (request.http.body && request.http.body === 'formUrlEncoded' && !request.body?.formUrlEncoded) {
+        throw new Error("Form URL Encoded body must be provided for HTTP requests with 'formUrlEncoded' body type");
+    }
+    if (request.http.body && request.http.body === 'multipartForm' && !request.body?.multipartForm) {
+        throw new Error("Multipart Form body must be provided for HTTP requests with 'multipartForm' body type");
+    }
+    if (request.http.body && request.http.body === 'file' && !request.body?.file) {
+        throw new Error("File body must be provided for HTTP requests with 'file' body type");
+    }
+
+}
+
+export function validateCollection(collection: BrunoCollection): void {
+    // Basic validation for collection
+    if (!collection.meta?.name) {
+        throw new Error("Collection must have a meta object with a name");
+    }
+
+    if (collection.meta.type !== 'collection') {
+        throw new Error("Collection meta type must be 'collection'");
+    }
+}
+
+export function validateEnvironment(environment: BrunoEnvironment): void {
+    // Basic validation for environment
+    if (!environment.variables) {
+        throw new Error("Environment must have a variables array");
+    }
+
+    if (!Array.isArray(environment.variables)) {
+        throw new Error("Environment variables must be an array");
+    }
+
+    // Validate each variable
+    environment.variables.forEach((variable, index) => {
+        if (!variable.name || typeof variable.name !== 'string') {
+            throw new Error(`Environment variable at index ${index} must have a valid name`);
+        }
+
+        if (variable.value !== undefined && typeof variable.value !== 'string') {
+            throw new Error(`Environment variable '${variable.name}' must have a string value`);
+        }
+
+        if (typeof variable.enabled !== 'boolean') {
+            throw new Error(`Environment variable '${variable.name}' must have an enabled boolean property`);
+        }
+
+        if (variable.secret !== undefined && typeof variable.secret !== 'boolean') {
+            throw new Error(`Environment variable '${variable.name}' secret property must be a boolean`);
+        }
+    });
+
+    // Check for duplicate variable names
+    const names = environment.variables.map(v => v.name);
+    const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
+    if (duplicates.length > 0) {
+        throw new Error(`Duplicate environment variable names found: ${duplicates.join(', ')}`);
+    }
+}
+
+export function validateFolder(folder: BrunoFolder): void {
+    // Basic validation for folder
+    if (!folder.meta) {
+        throw new Error("Folder must have a meta object");
+    }
+
+    if (!folder.meta.name || typeof folder.meta.name !== 'string') {
+        throw new Error("Folder must have a valid name in meta");
+    }
+
+    if (typeof folder.meta.seq !== 'number') {
+        throw new Error("Folder must have a numeric sequence (seq) in meta");
+    }
+
+    if (folder.meta.seq < 0) {
+        throw new Error("Folder sequence (seq) must be a non-negative number");
+    }
+}
