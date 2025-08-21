@@ -1,6 +1,6 @@
 {
   "name": "@wilde-it/bruno-generator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TypeScript library for generating Bruno request and collection files with validation",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
