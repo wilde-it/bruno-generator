@@ -2,14 +2,16 @@
   "name": "@wilde-it/bruno-generator",
   "version": "0.0.1",
   "description": "TypeScript library for generating Bruno request and collection files with validation",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "main": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
     }
   },
   "repository": {
@@ -22,7 +24,7 @@
   "scripts": {
     "build": "bun run build.ts",
     "clean": "bun run rm -rf dist",
-    "prepublishOnly": "bun run clean && bun run build",
+    "prepublishOnly": "bun run build",
     "test": "bun test",
     "lint": "bun run tsc --noEmit",
     "release:minor": "node scripts/release-minor.js",
